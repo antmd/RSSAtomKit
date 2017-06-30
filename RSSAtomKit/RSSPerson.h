@@ -6,7 +6,7 @@
 //
 //
 
-#import "MTLModel.h"
+#import <Mantle/MTLModel.h>
 #import "RSSFeed.h"
 
 @class ONOXMLElement;

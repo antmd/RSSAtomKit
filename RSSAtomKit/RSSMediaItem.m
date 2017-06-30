@@ -51,6 +51,9 @@
             [thumbnails addObject:thumbnail];
         }
     }];
+    _sparkleVersion = [element valueForAttribute:@"version"];
+    _sparkleShortVersion = [element valueForAttribute:@"shortVersionString"];
+    
     _thumbnails = thumbnails;
 }
 

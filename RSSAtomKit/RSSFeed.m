@@ -69,6 +69,7 @@ NSString *const kRSSFeedDublinCoreNameSpace = @"http://purl.org/dc/elements/1.1/
     _htmlURL = [self htmlURLFromChannelOrFeedElement:channel];
     _feedDescription = [self descriptionFromChannelOrFeedElement:channel];
     _xmlURL = [self xmlURLFromChannelOrFeedElement:channel];
+    _xmlAlternateURL = [self xmlURLFromChannelOrFeedElement:channel];
 }
 
 
@@ -96,17 +97,26 @@ NSString *const kRSSFeedDublinCoreNameSpace = @"http://purl.org/dc/elements/1.1/
     ONOXMLElement *titleElement = [channelElement firstChildWithTag:@"title"];
     title = [titleElement stringValue];
     if (![title length]) {
-        ONOXMLElement *titleElement = [channelElement firstChildWithXPath:[NSString stringWithFormat:@"/%@:feed/%@:title",kRSSFeedAtomPrefix,kRSSFeedAtomPrefix]];
+        titleElement = [channelElement firstChildWithXPath:[NSString stringWithFormat:@"/%@:feed/%@:title",kRSSFeedAtomPrefix,kRSSFeedAtomPrefix]];
         title = [titleElement stringValue];
     }
     
     return title;
 }
-
 - (NSURL *)xmlURLFromChannelOrFeedElement:(ONOXMLElement *)channelElement
 {
+    return [self xmlURLFromChannelOrFeedElement:channelElement withRel:@"self"];
+}
+- (NSURL *)xmlAlternateURLFromChannelOrFeedElement:(ONOXMLElement *)channelElement
+{
+    return [self xmlURLFromChannelOrFeedElement:channelElement withRel:@"alternate"];
+}
+
+- (NSURL *)xmlURLFromChannelOrFeedElement:(ONOXMLElement *)channelElement withRel:(NSString*)rel
+{
     //Try on all feeds because many rss feeds have atom inside
-    ONOXMLElement *selfLinkElement = [channelElement firstChildWithXPath:@"./*[contains(local-name(), 'link')][@rel = 'self' and @type = 'application/rss+xml' and @href]"];
+    NSString *xpath = [NSString stringWithFormat:@"./*[contains(local-name(), 'link')][@rel = '%@' and @type = 'application/rss+xml' and @href]", rel];
+    ONOXMLElement *selfLinkElement = [channelElement firstChildWithXPath:xpath];
     
     NSString *xmlLInkString = [selfLinkElement valueForAttribute:@"href"];
     if ([xmlLInkString length]) {
@@ -190,10 +200,10 @@ NSString *const kRSSFeedDublinCoreNameSpace = @"http://purl.org/dc/elements/1.1/
             // Top level outline. Pick up the category from this.
             NSString *category = [element valueForAttribute:@"text"];
             
-            [element enumerateElementsWithXPath:@".//outline[@xmlUrl]" usingBlock:^(ONOXMLElement *element, NSUInteger idx, BOOL *stop) {
+            [element enumerateElementsWithXPath:@".//outline[@xmlUrl]" usingBlock:^(ONOXMLElement *el, NSUInteger i, BOOL *st) {
                 RSSFeed *feed = [[[self class] alloc] init];
                 [feed setFeedCategory:category];
-                [feed parseOPMLOutlineElement:element];
+                [feed parseOPMLOutlineElement:el];
                 if (feed) {
                     [feeds addObject:feed];
                 }

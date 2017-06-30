@@ -7,7 +7,7 @@
 //
 
 #import "RSSParser.h"
-#import "Ono.h"
+#import <Ono/Ono.h>
 
 @implementation RSSParser
 

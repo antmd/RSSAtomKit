@@ -12,6 +12,12 @@
 #import "RSSMediaItem.h"
 #import "RSSPerson.h"
 
+@interface RSSItem()
+@property (nonatomic, strong, readwrite) ONOXMLElement *element;
+
+@end
+
+
 @implementation RSSItem
 
 
@@ -32,9 +38,13 @@
     }
     _title = [self titleFromElement:element];
     _publicationDate = [self publicationDateFromElement:element];
-    _linkURL = [self linkURLFromElement:element];
+    _linkURL = [self linkURLFromElement:element withRel:@"self"];
+    _alternateLinkURL = [self linkURLFromElement:element withRel:@"alternate"];
+    
     _itemDescription = [self itemDescriptionFromElement:element];
     _author = [self authorFromElement:element];
+    _sparkleReleaseNotesLink = [NSURL URLWithString:[[element firstChildWithTag:@"releaseNotesLink"] stringValue] ];
+    self.element = element;
     
     ONOXMLElement *thumbnailElement = [element firstChildWithTag:@"thumbnail" inNamespace:@"media"];
     if (thumbnailElement) {
@@ -75,7 +85,7 @@
     return nil;
 }
 
-- (NSURL *)linkURLFromElement:(ONOXMLElement *)element
+- (NSURL *)linkURLFromElement:(ONOXMLElement *)element withRel:(NSString*)rel
 {
     //Picks up on both Atom and RSS methods for links <link> and <atom:link> prefer rss way
     __block NSString *stringURL = nil;
@@ -97,7 +107,7 @@
     }
     
     [links enumerateObjectsUsingBlock:^(ONOXMLElement *linkElement, NSUInteger idx, BOOL *stop) {
-        if (![[linkElement valueForAttribute:@"rel"] isEqualToString:@"self"]) {
+        if (![[linkElement valueForAttribute:@"rel"] isEqualToString:rel]) {
             stringURL = linkExtractorBlock(linkElement);
             *stop = YES;
         }
@@ -176,8 +186,8 @@
 - (NSArray *)mediaItemsFromElement:(ONOXMLElement *)element withXPath:(NSString *)xPath mediaItemClass:(Class)mediaItemClass
 {
     NSMutableArray *tempMediaItems = [NSMutableArray array];
-    [element enumerateElementsWithXPath:xPath usingBlock:^(ONOXMLElement *element, NSUInteger idx, BOOL *stop) {
-        RSSMediaItem *item = [[mediaItemClass alloc] initWithFeedType:self.feedType xmlElement:element];
+    [element enumerateElementsWithXPath:xPath usingBlock:^(ONOXMLElement *el, NSUInteger idx, BOOL *stop) {
+        RSSMediaItem *item = [[mediaItemClass alloc] initWithFeedType:self.feedType xmlElement:el];
         if ([item.url.absoluteString length] || [item.thumbnails count]) {
             [tempMediaItems addObject:item];
         }

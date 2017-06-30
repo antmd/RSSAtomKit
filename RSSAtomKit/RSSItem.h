@@ -6,11 +6,10 @@
 //
 //
 
-#import "MTLModel+NSCoding.h"
+#import <Mantle/MTLModel+NSCoding.h>
 #import "RSSFeed.h"
-#import "Ono.h"
+#import <Ono/Ono.h>
 
-@import UIKit;
 
 @class RSSPerson;
 
@@ -25,7 +24,11 @@
 @property (nonatomic, strong, readonly) NSString *itemDescription;
 @property (nonatomic, strong, readonly) NSDate *publicationDate;
 @property (nonatomic, strong, readonly) NSURL *linkURL;
+@property (nonatomic, strong, readonly) NSURL *alternateLinkURL;
 @property (nonatomic, strong, readonly) RSSPerson *author;
+@property (nonatomic, copy, readonly) ONOXMLElement *element;
+@property (nonatomic, copy, readonly) NSURL *sparkleReleaseNotesLink;
+
 
 // Media RSS
 @property (nonatomic, strong, readonly) NSURL *thumbnailURL;

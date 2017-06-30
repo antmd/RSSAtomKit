@@ -6,8 +6,8 @@
 //
 //
 
-#import "MTLModel.h"
-#import "Ono.h"
+#import <Mantle/MTLModel.h>
+#import <Ono/Ono.h>
 
 typedef NS_ENUM(NSUInteger, RSSFeedType) {
     RSSFeedTypeUnknown, // Parse Error
@@ -52,6 +52,7 @@ extern NSString *const kRSSFeedDublinCoreNameSpace;
  Atom: tries tag atom:link with attributes rel = self and type = application/atom+xml and href
  */
 @property (nonatomic, strong) NSURL *xmlURL;
+@property (nonatomic, strong) NSURL *xmlAlternateURL;
 
 /**
  This is the url that comes from teh NSURLResponse from the network requests. It's not found in the XML document but from

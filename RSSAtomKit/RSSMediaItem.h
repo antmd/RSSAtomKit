@@ -6,7 +6,7 @@
 //
 //
 
-#import "MTLModel+NSCoding.h"
+#import <Mantle/MTLModel+NSCoding.h>
 #import "RSSFeed.h"
 @class ONOXMLElement;
 
@@ -15,6 +15,8 @@
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, strong, readonly) NSString *type;
 @property (nonatomic, readonly) NSUInteger length;
+@property (nonatomic, readonly) NSString * sparkleVersion;
+@property (nonatomic, readonly) NSString * sparkleShortVersion;
 
 /**
  * An array of RSSMediaItem thumbnails ordered by importance

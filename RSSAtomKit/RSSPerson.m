@@ -7,7 +7,7 @@
 //
 
 #import "RSSPerson.h"
-#import "Ono.h"
+#import <Ono/Ono.h>
 
 @implementation RSSPerson
 
